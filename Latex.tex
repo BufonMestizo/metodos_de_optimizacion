@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+	
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphics}
+\usepackage{fancyhdr}				
+\usepackage{graphicx}			
+\usepackage{cancel}		
+\usepackage[spanish]{babel}
+\usepackage{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Set up fancy header/footer
+\pagestyle{fancy}
+\fancyhead[LO,L]{Métodos de ptimización}
+\fancyhead[CO,C]{FINESI}
+\fancyhead[RO,R]{13 de enero de 2025}
+\fancyfoot[LO,L]{}
+\fancyfoot[CO,C]{\thepage}
+\fancyfoot[RO,R]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\noindent \textbf{\large Universidad Nacional del Altiplano\\
+Facultad de Ingeniería Estadística e Informática\\
+Docente: } \large Fred Torres Cruz\\
+\textbf {\large Autor :} Ronald Junior Pilco Nuñez
+\begin{center}
+ \section*{Trabajo Encargado - N° 001}
+ \section*{Graficador de Funciones}
+\end{center}
+
+\section{Introducción}
+
+\noindent Se desarrolló una aplicación para graficar funciones matemáticas de una variable usando Python, con Tkinter para la interfaz gráfica y Matplotlib para la visualización.
+
+\section{Tecnologías}
+
+\begin{itemize}
+    \item \textbf{Python}: Lenguaje multiparadigma, ideal por su simplicidad y amplio ecosistema.
+    \item \textbf{Tkinter}: Biblioteca de python para construir la interfaz de usuario.
+    \item \textbf{Matplotlib}: Biblioteca de python para generación de gráficas personalizables.
+    \item \textbf{NumPy}: Biblioteca de python para anejo eficiente de datos numéricos.
+\end{itemize}
+
+\section{Arquitectura}
+
+\begin{itemize}
+    \item \textbf{Interfaz}: Permite ingresar la función y el intervalo.
+    \item \textbf{Cálculo}: Evalúa la función en el rango indicado.
+    \item \textbf{Visualización}: Genera la gráfica con cuadrícula, etiquetas y límites definidos.
+\end{itemize}
+
+\section{Características}
+
+\begin{itemize}
+    \item Entrada de funciones matemáticas (ej. \( x^2 \)).
+    \item Configuración del rango de la variable.
+    \item Gráfica con cuadrícula, etiquetas y leyenda.
+\end{itemize}
+
+\section{Código}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Código.png}
+    \caption{Código en Python}
+    \label{fig:ejemplo-grafica}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{Graficador.png}
+    \caption{Ejemplo de gráfica generada por la aplicación.}
+    \label{fig:ejemplo-grafica}
+\end{figure}
+
+\section{Conclusión}
+
+\noindent Python y sus bibliotecas permiten crear herramientas intuitivas y funcionales para la visualización matemática. Futuras mejoras podrían incluir validación más robusta y exportación de gráficas.
+
+\section*{Github}
+\href{https://github.com/BufonMestizo/metodos_de_optimizacion/blob/master/TRABAJO%20NRO%20001.py}{Repositorio Git}
+
+\end{document}
