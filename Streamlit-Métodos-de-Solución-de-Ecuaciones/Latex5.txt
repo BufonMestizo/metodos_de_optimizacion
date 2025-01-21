@@ -1,0 +1,138 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{a4paper, margin=1in}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage[spanish]{babel}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhead[LO,L]{Métodos de ptimización}
+\fancyhead[CO,C]{FINESI}
+\fancyhead[RO,R]{\today}
+\fancyfoot[LO,L]{}
+\fancyfoot[CO,C]{\thepage}
+\fancyfoot[RO,R]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\noindent \textbf{\large Universidad Nacional del Altiplano\\
+Facultad de Ingeniería Estadística e Informática\\
+Docente: } \large Fred Torres Cruz\\
+\textbf {\large Autor :} Ronald Junior Pilco Nuñez
+\begin{center}
+ \section*{Trabajo Encargado - N° 005}
+ \section*{Resolución de Sistemas de Ecuaciones Lineales}
+\end{center}
+
+\section*{Github}\href{https://github.com/BufonMestizo/metodos_de_optimizacion/tree/master/Streamlit-M%C3%A9todos-de-Soluci%C3%B3n-de-Ecuaciones}{Repositorio github}
+
+\section*{Streamlit}\href{https://metodosdeoptimizacion-wmjvapeug3zzqjd2tesvvo.streamlit.app/}{Streamlit.app}
+
+\section{Introducción}
+Este informe detalla la implementación de una aplicación interactiva para resolver sistemas de ecuaciones lineales utilizando tres métodos: Sustitución, Gauss-Jordan y la Regla de Cramer. La aplicación está desarrollada en Python utilizando el marco Streamlit, proporcionando una interfaz amigable para ingresar los datos y observar tanto los resultados como los procedimientos detallados.
+
+\section{Métodos Implementados}
+A continuación, se describen brevemente los métodos disponibles:
+
+\subsection{Sustitución}
+El método de sustitución se basa en resolver el sistema de manera escalonada, despejando una variable a la vez y sustituyendo su valor en las siguientes ecuaciones.
+
+\subsection{Gauss-Jordan}
+Este método consiste en transformar la matriz aumentada del sistema en su forma reducida por filas (RREF) mediante operaciones elementales, lo que permite obtener directamente los valores de las variables.
+
+\subsection{Regla de Cramer}
+Este método aplica el teorema de Cramer, que utiliza determinantes para encontrar las soluciones del sistema siempre que el determinante de la matriz de coeficientes sea diferente de cero.
+
+\section{Procedimiento en la Aplicación}
+La aplicación solicita al usuario:
+\begin{itemize}
+    \item La matriz de coeficientes \(A\).
+    \item El vector de términos independientes \(b\).
+    \item El método deseado para resolver el sistema.
+\end{itemize}
+
+Dependiendo del método seleccionado, la aplicación muestra:
+\begin{itemize}
+    \item Los resultados finales del sistema de ecuaciones.
+    \item Un procedimiento detallado con los pasos intermedios realizados.
+\end{itemize}
+
+\section{Resultados Ejemplo}
+A continuación, se presenta un ejemplo de la salida para un sistema de ecuaciones resuelto utilizando cada método.
+
+\subsection{Sistema de Ejemplo}
+Considere el siguiente sistema de ecuaciones:
+\[
+\begin{aligned}
+    2x + 3y &= 5 \\
+    4x - y &= 6
+\end{aligned}
+\]
+
+\subsection{Resultados por Sustitución}
+\textbf{Resultados:}
+\begin{itemize}
+    \item \(x = 2\)
+    \item \(y = 1\)
+\end{itemize}
+\textbf{Procedimiento:}
+\begin{enumerate}
+    \item Despejar \(y\) en la primera ecuación: \(y = (5 - 2x) / 3\).
+    \item Sustituir en la segunda ecuación: \(4x - (5 - 2x)/3 = 6\).
+    \item Resolver para \(x\): \(x = 2\).
+    \item Sustituir \(x\) en \(y = (5 - 2x) / 3\): \(y = 1\).
+\end{enumerate}
+
+\subsection{Resultados por Gauss-Jordan}
+\textbf{Resultados:}
+\begin{itemize}
+    \item \(x = 2\)
+    \item \(y = 1\)
+\end{itemize}
+\textbf{Procedimiento:}
+\begin{enumerate}
+    \item Formar la matriz aumentada:
+    \[
+    \begin{bmatrix}
+        2 & 3 & | & 5 \\
+        4 & -1 & | & 6
+    \end{bmatrix}
+    \]
+    \item Dividir la primera fila por 2 y realizar operaciones fila para eliminar el elemento debajo del pivote.
+    \item Dividir la segunda fila por su pivote y realizar operaciones fila para eliminar el elemento arriba del pivote.
+    \item La matriz resultante es:
+    \[
+    \begin{bmatrix}
+        1 & 0 & | & 2 \\
+        0 & 1 & | & 1
+    \end{bmatrix}
+    \]
+    \item Leer los resultados: \(x = 2, y = 1\).
+\end{enumerate}
+
+\subsection{Resultados por Regla de Cramer}
+\textbf{Resultados:}
+\begin{itemize}
+    \item \(x = 2\)
+    \item \(y = 1\)
+\end{itemize}
+\textbf{Procedimiento:}
+\begin{enumerate}
+    \item Calcular el determinante de \(A\): \(\det(A) = -10\).
+    \item Calcular los determinantes de las matrices modificadas \(A_1\) y \(A_2\).
+    \item \(x = \det(A_1) / \det(A) = 2\).
+    \item \(y = \det(A_2) / \det(A) = 1\).
+\end{enumerate}
+
+\section{Conclusiones}
+La implementación de estos métodos permite resolver sistemas de ecuaciones lineales de manera interactiva y educativa, mostrando los pasos intermedios que ayudan a entender el proceso detrás de cada solución.
+
+\end{document}
