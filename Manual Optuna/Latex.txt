@@ -1,0 +1,328 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{float}
+\geometry{a4paper, margin=1in}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\fancyhead[LO,L]{Métodos de ptimización}
+\fancyhead[CO,C]{FINESI}
+\fancyhead[RO,R]{\today}
+\fancyfoot[LO,L]{}
+\fancyfoot[CO,C]{\thepage}
+\fancyfoot[RO,R]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Introducción a Optuna},
+    pdfpagemode=FullScreen,
+}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single
+}
+
+\begin{document}
+\noindent \textbf{\large Universidad Nacional del Altiplano\\
+Facultad de Ingeniería Estadística e Informática\\
+Docente: } \large Fred Torres Cruz\\
+\textbf {\large Autor :} Ronald Junior Pilco Nuñez
+\begin{center}
+ \section*{Manual Optuna}
+ \href{https://github.com/BufonMestizo/metodos_de_optimizacion/tree/master/Manual%20Optuna}{Github}
+\end{center}
+
+\tableofcontents
+
+\newpage
+\section{Introducción a Optuna}
+Optuna es un framework de optimización de hiperparámetros diseñado para ser fácil de usar y eficiente. Es especialmente útil para la optimización de modelos de machine learning, pero también puede ser utilizado en otros contextos donde se necesite optimizar parámetros.
+
+\section{Conceptos Básicos}
+
+\subsection{Estudio (Study)}
+Un \textbf{estudio} en Optuna es un conjunto de ejecuciones de optimización con el objetivo de maximizar o minimizar una métrica de rendimiento. Se crea usando \texttt{optuna.create\_study()} y se ejecuta con \texttt{study.optimize()}.
+
+\begin{lstlisting}[language=Python]
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=10)
+\end{lstlisting}
+
+\subsection{Prueba (Trial)}
+Cada ejecución en un estudio es una \textbf{prueba}. Cada prueba evalúa una combinación de hiperparámetros definida por el objeto \texttt{trial}. Los resultados de cada prueba guían la búsqueda hacia la mejor configuración.
+
+\begin{lstlisting}[language=Python]
+def objective(trial):
+    n_estimators = trial.suggest_int("n_estimators", 10, 100)
+    max_depth = trial.suggest_int("max_depth", 1, 10)
+    clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+    return cross_val_score(clf, X_train, y_train).mean()
+\end{lstlisting}
+
+\subsection{Espacio de Búsqueda}
+El \textbf{espacio de búsqueda} define los rangos y distribuciones de los hiperparámetros. Se puede usar \texttt{suggest\_int}, \texttt{suggest\_float} o \texttt{suggest\_categorical} para definir las opciones a explorar.
+
+\begin{lstlisting}[language=Python]
+n_estimators = trial.suggest_int("n_estimators", 10, 100)
+max_depth = trial.suggest_int("max_depth", 1, 10)
+classifier = trial.suggest_categorical("classifier", ["RandomForest", "SVC"])
+\end{lstlisting}
+
+\newpage
+\section{Instalación}
+Para instalar Optuna, utiliza el siguiente comando en tu terminal:
+
+\begin{lstlisting}[language=bash]
+pip install optuna
+\end{lstlisting}
+
+\includegraphics[width=1\textwidth]{install.png}
+
+\section{Ejemplos}
+Optimización de Hiperparámetros de Modelos de Clasificación con Optuna
+\section*{Requerimientos para los ejemplos}
+\begin{lstlisting}[language=bash]
+pip install optuna
+pip install scikit-learn
+pip install plotly
+pip install matplotlib
+\end{lstlisting}
+\subsection{Optimización de Hiperparámetros}
+El siguiente código muestra cómo optimizar los hiperparámetros de un modelo de Random Forest utilizando Optuna.
+
+\begin{lstlisting}[language=Python]
+import optuna
+
+def objective(trial):
+    iris = sklearn.datasets.load_iris()
+
+    n_estimators = trial.suggest_int("n_estimators", 2, 20)
+    max_depth = int(trial.suggest_float("max_depth", 1, 32, log=True))
+
+    clf = sklearn.ensemble.RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+
+    return sklearn.model_selection.cross_val_score(
+        clf, iris.data, iris.target, n_jobs=-1, cv=3
+    ).mean()
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=10)
+
+trial = study.best_trial
+
+print("Accuracy: {}".format(trial.value))
+print("Best hyperparameters: {}".format(trial.params))
+\end{lstlisting}
+
+\subsection{Condicionamiento de Hiperparámetros}
+Es posible condicionar hiperparámetros utilizando sentencias `if` en Python. En este ejemplo, se incluyen dos clasificadores: Random Forest y Support Vector Machine (SVM).
+
+\begin{lstlisting}[language=Python]
+import sklearn.svm
+
+def objective(trial):
+    iris = sklearn.datasets.load_iris()
+
+    classifier = trial.suggest_categorical("classifier", ["RandomForest", "SVC"])
+
+    if classifier == "RandomForest":
+        n_estimators = trial.suggest_int("n_estimators", 2, 20)
+        max_depth = int(trial.suggest_float("max_depth", 1, 32, log=True))
+
+        clf = sklearn.ensemble.RandomForestClassifier(
+            n_estimators=n_estimators, max_depth=max_depth
+        )
+    else:
+        c = trial.suggest_float("svc_c", 1e-10, 1e10, log=True)
+
+        clf = sklearn.svm.SVC(C=c, gamma="auto")
+
+    return sklearn.model_selection.cross_val_score(
+        clf, iris.data, iris.target, n_jobs=-1, cv=3
+    ).mean()
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=10)
+
+trial = study.best_trial
+
+print("Accuracy: {}".format(trial.value))
+print("Best hyperparameters: {}".format(trial.params))
+\end{lstlisting}
+
+\subsection{Optimización de Modelos de IA con Optuna y Datos de Uso de IA (OptimizacionModelosUso\_IA.py)}
+\begin{lstlisting}[language=Python]
+import optuna
+import pandas as pd
+import sklearn.ensemble
+import sklearn.model_selection
+import sklearn.svm
+import optuna.visualization
+from sklearn.preprocessing import LabelEncoder
+
+def load_data(csv_path):
+    df = pd.read_csv(csv_path)
+    X = df.iloc[:, :-1].values  # Todas las columnas excepto la última
+    y = df.iloc[:, -1].values  # Última columna como variable objetivo
+    
+    # Si la variable objetivo es categórica, la convertimos a valores numéricos
+    if y.dtype == 'object':
+        y = LabelEncoder().fit_transform(y)
+    
+    return X, y
+
+def objective(trial):
+    X, y = load_data("uso_ia_data.csv")  # Usar la base de datos de uso de IA
+    
+    classifier = trial.suggest_categorical("classifier", ["RandomForest", "SVC"])
+    
+    if classifier == "RandomForest":
+        n_estimators = trial.suggest_int("n_estimators", 2, 20)
+        max_depth = int(trial.suggest_float("max_depth", 1, 32, log=True))
+        
+        clf = sklearn.ensemble.RandomForestClassifier(
+            n_estimators=n_estimators, max_depth=max_depth
+        )
+    else:
+        c = trial.suggest_float("svc_c", 1e-10, 1e10, log=True)
+        
+        clf = sklearn.svm.SVC(C=c, gamma="auto")
+    
+    return sklearn.model_selection.cross_val_score(
+        clf, X, y, n_jobs=-1, cv=3
+    ).mean()
+
+study = optuna.create_study(direction="maximize")
+study.optimize(objective, n_trials=100)
+
+trial = study.best_trial
+
+print("Accuracy: {}".format(trial.value))
+print("Best hyperparameters: {}".format(trial.params))
+
+# Graficar los resultados de la optimización
+optuna.visualization.plot_optimization_history(study).show()
+optuna.visualization.plot_slice(study).show()
+optuna.visualization.plot_contour(study, params=["n_estimators", "max_depth"]).show()
+\end{lstlisting}
+
+Este programa utiliza \textbf{Optuna} para optimizar hiperparámetros de modelos de clasificación (\texttt{RandomForestClassifier} y \texttt{SVC}) basados en datos sobre uso de IA. Se entrena y evalúa mediante validación cruzada, maximizando la precisión del modelo.
+\section*{Resultado:}
+\includegraphics[width=1\textwidth]{Resultado.png}
+
+\section*{Interpretación del resultado:}  
+El mejor modelo encontrado es un \texttt{RandomForestClassifier} con \textbf{10} árboles y una profundidad máxima de aproximadamente \textbf{22}. Sin embargo, la precisión alcanzada (\textbf{0.457}) es baja, lo que sugiere que el modelo no está generalizando bien. Posibles mejoras incluyen el preprocesamiento de datos, selección de características o ajuste de hiperparámetros adicionales.
+
+
+\section{Optimización Avanzada}
+\subsection{Samplers}
+En Optuna, el muestreo de hiperparámetros es un proceso clave para la búsqueda de la mejor combinación. Optuna ofrece varios algoritmos de muestreo, cada uno con ventajas en diferentes situaciones. Los tres samplers más comunes son:
+
+\begin{itemize}
+    \item \textbf{TPE (Tree-structured Parzen Estimator)}: Este algoritmo probabilístico modela la distribución de los hiperparámetros a través de un árbol estructurado, el cual se ajusta de manera eficiente a partir de la información obtenida durante la optimización. El TPE es especialmente útil cuando el espacio de búsqueda es complejo y no necesariamente convexo.
+    
+    \item \textbf{CMA-ES (Covariance Matrix Adaptation Evolution Strategy)}: Es un algoritmo de optimización evolutiva que se utiliza principalmente en espacios de búsqueda continuos y multidimensionales. El CMA-ES ajusta la matriz de covarianza de una distribución normal para generar muestras más efectivas y explorar el espacio de manera más dinámica.
+    
+    \item \textbf{Random Sampler}: Este es el algoritmo más simple, ya que selecciona combinaciones de hiperparámetros de manera completamente aleatoria dentro del espacio de búsqueda. Aunque no es tan eficiente como los métodos probabilísticos, puede ser útil en exploraciones iniciales o cuando no se tiene una idea clara del espacio de búsqueda.
+\end{itemize}
+
+\begin{lstlisting}[language=Python]
+# Usar TPE como sampler en el estudio
+study = optuna.create_study(sampler=optuna.samplers.TPESampler(), direction="maximize")
+study.optimize(objective, n_trials=100)
+\end{lstlisting}
+
+\subsection{Pruning}
+El \textbf{pruning} (o poda) es una técnica que permite interrumpir pruebas que no están ofreciendo buenos resultados, con el objetivo de ahorrar tiempo y recursos computacionales. Esto es especialmente útil cuando se trabaja con modelos costosos de entrenar, como redes neuronales o modelos complejos.
+
+Optuna tiene implementado un conjunto de \textit{pruners} que determinan cuándo interrumpir una prueba. Algunos de los pruners más comunes son:
+
+\begin{itemize}
+    \item \textbf{MedianPruner}: Interrumpe las pruebas que están por debajo de la mediana de las pruebas anteriores en el estudio. Esto puede ser útil para identificar y eliminar combinaciones de hiperparámetros no prometedoras rápidamente.
+    
+    \item \textbf{PercentilePruner}: Similar al \textit{MedianPruner}, pero interrumpe las pruebas que están por debajo de un percentil específico de las mejores pruebas realizadas hasta el momento.
+    
+    \item \textbf{SuccessiveHalvingPruner}: Divide el número de recursos (por ejemplo, número de épocas de entrenamiento) entre las pruebas, priorizando las más prometedoras en cada etapa.
+\end{itemize}
+
+A continuación, se muestra cómo aplicar un \textit{pruner} en un estudio:
+
+\begin{lstlisting}[language=Python]
+import optuna
+from optuna.pruners import MedianPruner
+
+study = optuna.create_study(direction='maximize', pruner=MedianPruner())
+study.optimize(objective, n_trials=100)
+\end{lstlisting}
+
+En este ejemplo, el \textit{MedianPruner} interrumpe las pruebas que no están mejorando y que se encuentran por debajo de la mediana de los resultados previos.
+
+\section{Visualización}
+Optuna ofrece potentes herramientas de visualización para analizar y comprender el proceso de optimización, así como los resultados obtenidos. Estas visualizaciones permiten evaluar tanto la evolución de la optimización como la importancia de cada hiperparámetro.
+
+\subsection{Gráfico de Optimización}
+El \textbf{gráfico de optimización} muestra cómo ha evolucionado el valor objetivo durante las pruebas del estudio. Este gráfico es útil para observar el progreso general de la optimización, así como identificar posibles estancamientos o la efectividad de la estrategia de optimización utilizada.
+
+\begin{lstlisting}[language=Python]
+optuna.visualization.plot_optimization_history(study)
+\end{lstlisting}
+
+Este gráfico ilustra la evolución de la función objetivo a lo largo de las pruebas, lo que ayuda a evaluar si la optimización está convergiendo correctamente.
+
+\subsection{Gráfico de Importancia de Hiperparámetros}
+El \textbf{gráfico de importancia de hiperparámetros} muestra qué tan importante es cada hiperparámetro en el rendimiento del modelo. Este análisis es crucial para entender qué hiperparámetros tienen un mayor impacto en el modelo y orientar mejor las futuras iteraciones de optimización.
+
+\begin{lstlisting}[language=Python]
+optuna.visualization.plot_param_importances(study)
+\end{lstlisting}
+
+Este gráfico permite identificar de manera visual qué parámetros son más relevantes para la función objetivo, lo que puede guiar la selección de los hiperparámetros a optimizar en futuras ejecuciones.
+
+\subsection{Gráfico de Dependencia}
+El \textbf{gráfico de dependencia} visualiza cómo el valor de un hiperparámetro afecta a la función objetivo, teniendo en cuenta los valores de otros hiperparámetros. Este tipo de gráfico ayuda a identificar interacciones entre los hiperparámetros que pueden ser cruciales para la optimización.
+
+\begin{lstlisting}[language=Python]
+optuna.visualization.plot_parallel_coordinate(study)
+\end{lstlisting}
+
+Este gráfico es especialmente útil para observar cómo varían varias combinaciones de hiperparámetros y su impacto en el rendimiento del modelo.
+
+\subsection{Gráfico de Contorno}
+El \textbf{gráfico de contorno} muestra cómo cambian los valores de la función objetivo en función de dos hiperparámetros específicos. Es útil cuando se desea entender cómo interactúan dos hiperparámetros y cómo afectan el rendimiento del modelo.
+
+\begin{lstlisting}[language=Python]
+optuna.visualization.plot_contour(study, params=["n_estimators", "max_depth"])
+\end{lstlisting}
+
+Este gráfico proporciona una representación visual de la superficie de precisión en función de los hiperparámetros seleccionados, lo que permite una exploración más detallada del espacio de búsqueda.
+
+\section*{Conclusión}
+Optuna es una herramienta poderosa para la optimización automática de hiperparámetros, especialmente en proyectos de machine learning donde encontrar los mejores parámetros puede ser un desafío. Con su simplicidad y eficiencia, Optuna permite a los investigadores y desarrolladores ahorrar tiempo y obtener mejores resultados.
+
+Para más información, visita \href{https://optuna.org}{Optuna.org}.
+
+\end{document}
